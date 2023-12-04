@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Password Reset</title>
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
+    <link href="../style.css" rel="stylesheet" type="text/css">
+    <script src="https://www.google.com/recaptcha/api.js"></script>
+    <script src="../validation/email_captcha.js"></script>
+
+</head>
+<body>
+<div class="commonBox">
+    <h1>Provide the email address for your account</h1>
+    <form action="password_reset_request.php" method="post" id="login-form">
+        
+        <label for="email">
+            <i class="fas fa-envelope"></i>
+        </label>            
+        <input type="email" name="email" placeholder="Email address" id="email" required>
+            
+        <input type="submit" value="Reset Password" class="g-recaptcha" data-sitekey="6LeeNCEpAAAAACjAcEUxAEKzRPGkN4Odwveq8Fh_"  data-callback='onSubmit' data-action='submit'>
+
+        
+    </form>
+</div>
+
+</body>
+</html>
+
