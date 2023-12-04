@@ -24,7 +24,7 @@ function send_password_reset(string $email, $connection): void
     $mail->SMTPAuth = true;
     $mail->SMTPSecure = "ssl";
     $mail->Username = "mihaifcp44279@gmail.com";
-    $mail->Password = "osad lhzc fbau yxzx";
+    $mail->Password = "";
     $mail->Port = "465";
 
     // Set email content
