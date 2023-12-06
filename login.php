@@ -23,7 +23,6 @@ if ($accountLockCheck = $connection->prepare('SELECT id FROM accounts WHERE lock
 	$accountLockCheck->close();
 }
 
-// Prepare our SQL, preparing the SQL statement will prevent SQL injection.
 if ($statement = $connection->prepare('SELECT id, email, confirmed, password FROM accounts WHERE username = ?')) {
 	$statement->bind_param('s', $_POST['username']);
 	$statement->execute();
@@ -43,6 +42,8 @@ if ($statement = $connection->prepare('SELECT id, email, confirmed, password FRO
 				$lockAccount->close();
 			}
 			$_SESSION['session_email'] = $email;
+			$_SESSION['session_id'] = $id;
+			$_SESSION['session_user'] = $username;
 			send_login_code($email, $connection);
 			header("Location: confirmation/confirm.html");
 			exit();
@@ -83,14 +84,10 @@ if ($statement = $connection->prepare('SELECT id, email, confirmed, password FRO
 			}
 		}
 	} else {
-		
-		exit("incorrect username");
-		
+		header('Location: confirmation/username_not_found.html');
+		exit();
 	}
-
 	$statement->close();
-	exit("end of file");
+	exit();
 }
-
-
 ?>

@@ -13,3 +13,10 @@ CREATE TABLE IF NOT EXISTS `accounts` (
 	`confirmed` tinyint(1) NOT NULL DEFAULT '0',
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;   
+
+
+CREATE TABLE IF NOT EXISTS `images` (
+	`id` int(11) NOT NULL,
+  	`file_name` varchar(50) NOT NULL,
+  	`comment` varchar(255) NOT NULL
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;   

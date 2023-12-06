@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Request evaluation</title>
+    <link href="../style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+    <div class="commonBox">
+        <h1>Submit an evaluation</h1>
+        <form action="uploadfile.php"  method="post" enctype="multipart/form-data">
+            
+            <label for="comment">
+                <i class="fas fa-bubble"></i>
+            </label>
+            <input type="text" name="comment" placeholder="Comment" id="username" required>
+
+            <input type="file" name="fileToUpload" id="fileToUpload" enctype="multipart/form-data" required>
+
+            <input type="submit"  value="See your evaluation list">
+        </form>
+
+    </div>
+</body>
+</html>

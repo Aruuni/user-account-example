@@ -57,7 +57,7 @@ function send_account_confirmation(string $email, $connection): void
     $mail->Port = "465";
 
     // Set email content
-    $mail->setFrom('mm2350@gmail.com', 'Your Name'); // Change this to your email and name
+    $mail->setFrom('mm2350@gmail.com', 'Your Name'); 
     $mail->addAddress($email);
     $mail->Subject = 'Please activate your account';
     $mail->Body    = "Hi,\nPlease click the following link to activate your account:\n$activation_link";
@@ -74,7 +74,6 @@ function send_account_confirmation(string $email, $connection): void
 function insertAuthToken(string $email, string $token, $connection): void
 {
     if ($statement = $connection->prepare('UPDATE accounts SET activation_token = ?, activation_token_timestamp = DATE_ADD(NOW(), INTERVAL 10 MINUTE) WHERE email = ?')) {
-        // Bind parameters (s = string, i = int, b = blob, etc), in our case the username is a string so we use "s"
         $statement->bind_param('ss', $token, $email);
         $statement->execute();
         $statement->close();
@@ -89,6 +88,10 @@ function confirmAuthToken(string $email, string $token, $connection): bool
         $statement->store_result();
         if ($statement->num_rows > 0) {
             $statement->close();
+            if ($close_token = $connection->prepare('UPDATE accounts SET activation_token = NULL AND activation_token_timestamp = NULL AND password_reset_request = 0 AND password_request_timestamp = NULL WHERE email = ?')) {
+                $close_token->bind_param('s', $email);
+                $close_token->execute();           
+            }
             return true;
         }
         $statement->close();

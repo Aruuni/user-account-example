@@ -1,0 +1,38 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+  .commonBox {
+    width: 50%;
+    padding-left: 50px;
+    padding-right: 50px;
+    background-color: #ffffff;
+    box-shadow: 0 0 9px 0 rgba(0, 0, 0, 0.3);
+}
+  .gallery {
+    max-width: auto;
+    margin: 20px auto;
+    overflow: hidden;
+  }
+
+  .gallery-item {
+    margin-bottom: 20px;
+    border: 1px solid #002A00;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px #000000;
+  }
+
+  .gallery-item img {
+    max-width: 100%;
+    width: 100%;
+    height: auto;
+  }
+
+  .comment {
+    padding: 10px;
+    text-align: center;
+    color: #ffffff;
+    background-color: #005714;
+  }

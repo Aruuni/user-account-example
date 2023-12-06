@@ -16,7 +16,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $statement->execute();
             $statement->close();
         }
-        header("Location: http://localhost/IntroToCompSec/app/landing_page.html");
+        $_SESSION['logged_in'] = true;
+        header("Location: app/landing_page.html");
 		exit();
     } else {
         header("Location: confirmation/account_verification_failed.html");
