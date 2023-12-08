@@ -2,6 +2,15 @@
 include_once '../src/connection.php';
 
 session_start();
+//if not logged in or csrf token invalid, then we cannot procede
+
+if (!hash_equals($_SESSION['token'], $_POST['token']) || !$_SESSION['logged_in']) {
+  session_destroy();
+  header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');    
+  exit();
+}
+
+$contact = $_POST['contact'];
 $id = $_SESSION['session_id'];
 $comment = $_POST['comment'];
 $target_dir = "photos/".$id."/";
@@ -11,65 +20,75 @@ $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
 
 // Check if image file is a actual image or fake image
 if(isset($_POST["submit"])) {
-  $check = getimagesize($_FILES["fileToUpload"]["tmp_name"]);
-  if($check !== false) {
-    echo "File is an image - " . $check["mime"] . ".";
-    $uploadOk = 1;
-  } else {
-    echo "File is not an image.";
-    $uploadOk = 0;
+  if(getimagesize($_FILES["fileToUpload"]["tmp_name"] == false)) {     
+    exit("File is not an image.");
   }
 }
 
 // Check if file already exists
 if (file_exists($target_file)) {
-  echo "Sorry, file already exists.";
-  $uploadOk = 0;
+  exit("Sorry, file already exists.");
 }
 
-// Check file size
-// if ($_FILES["fileToUpload"]["size"] > 500000) {
-//   echo "Sorry, your file is too large.";
-//   $uploadOk = 0;
-// }
-
-// Allow certain file formats
-if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
-&& $imageFileType != "gif" ) {
-  echo "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
-  $uploadOk = 0;
+if (getimagesize($_FILES["fileToUpload"]["tmp_name"]) === false) {
+    exit("File is not an image.");
 }
 
+//Check file size to limit a file beeing too big
+if ($_FILES["fileToUpload"]["size"] > 1000000) {
+  exit( "Sorry, your file is too large.");
+}
+
+// Allow only these file formats
+if($imageFileType != "jpg" && 
+  $imageFileType != "png" && 
+  $imageFileType != "jpeg" && 
+  $imageFileType != "gif" ) {
+  exit("Sorry, only JPG, JPEG, PNG & GIF files are allowed.");
+}
+
+// Create the directory if it doesn't exist
 if (!file_exists($target_dir)) {
-    mkdir($target_dir, 0777, true);
+  mkdir($target_dir, 0777, true);
 }
-
-// Check if $uploadOk is set to 0 by an error
-if ($uploadOk == 0) {
-  echo "Sorry, your file was not uploaded.";
-// if everything is ok, try to upload file
+if ($contact == "Email") {
+  if ($statement = $connection->prepare('SELECT email FROM accounts WHERE id = ?')) {
+    $statement->bind_param('s', $id);
+    $statement->execute();
+    $statement->store_result();
+    $statement->bind_result($contact);
+  }
 } else {
-  if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
-    echo "The file ". htmlspecialchars( basename( $_FILES["fileToUpload"]["name"])). " has been uploaded.";
-    echo $target_dir;
-    if ($query = $connection->prepare("INSERT INTO images (id, comment, file_name) VALUES (?, ?, ?)")) {
-        $query->bind_param("sss", $id, $comment, basename( $_FILES["fileToUpload"]["name"]));
-        $query->execute();
-    
-        // Check if the insertion was successful
-        if ($query->affected_rows > 0) {
-            exit("File uploaded successfully."); // Make sure to exit after the header redirect
-        } else {
-            exit("Not good");
-        }
-    
-        $query->close();
-    } else {
-        header('Location: "fail/database_connection.html"');
-        exit();
-    }
-  } else {
-    echo "Sorry, there was an error uploading your file.";
+  if ($statement = $connection->prepare('SELECT phone FROM accounts WHERE id = ?')) {
+    $statement->bind_param('s', $id);
+    $statement->execute();
+    $statement->store_result();
+    $statement->bind_result($contact);
   }
 }
+// uploads the file
+if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
+  $filename = basename( $_FILES["fileToUpload"]["name"]);
+  if ($query = $connection->prepare("INSERT INTO images (id, comment, file_name, contact) VALUES (?, ?, ?, ?)")) {
+    $query->bind_param("ssss", $id, $comment, $filename, $contact);
+    $query->execute();
+
+    if ($query->affected_rows > 0) {
+      header('Location: responses/file_upload_succesful.html');
+      exit();
+    } else {
+      header('Location: responses/file_upload_fail.html');
+      exit();
+    }
+
+    $query->close();
+  } else {
+    header('Location: responses/file_upload_fail.html');
+    exit();
+  }
+} else {
+  header('Location: responses/file_upload_fail.html');
+  exit();
+}
+
 ?>

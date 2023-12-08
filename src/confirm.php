@@ -1,3 +1,7 @@
+<?php
+session_start();
+$_SESSION['CSRF'] = md5(uniqid(mt_rand(), true));
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,6 +23,8 @@
                 <i class="fas fa-lock"></i>
             </label>   
             <input type="text" id="token" name="token" required>
+            
+            <input type="hidden" name="CSRF" value="<?php echo $_SESSION['CSRF']; ?>">
 
             <input type="submit" value="Confirm" >
         </form>

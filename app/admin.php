@@ -3,59 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <link href="../style.css" rel="stylesheet" type="text/css">
     <link href="gallery.css" rel="stylesheet" type="text/css">
-
-    <title>Image Gallery</title>
+    
+    <title>Requested Evaluations</title>
 </head>
 <body>
     <div class ="commonBox">
-    <h1>Image Gallery</h1>
+    <h1>Requested Evaluations</h1>
 
     <?php
-    
-    // Function to get a list of image files in a directory
-    session_start();
-           
-    function getImagesFromDatabase() {
-        include_once '../src/connection.php';
-        $id = $_SESSION['session_id'];
+    include_once '../src/connection.php';
+    function getImagesFromDatabase($id, $conn) {
         $images = [];
-        $result = $connection->query("SELECT * FROM images WHERE id = '$id'");
-
+        $result = $conn->prepare('SELECT * FROM images WHERE id = ?');
+        $result->bind_param("i", $id); 
+        $result->execute();
+        $result = $result->get_result();
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
                 $images[] = $row;
             }
         }
-        $connection->close();
         return $images;
-    }
+    } 
 
-    // Loop through user folders and display images
-    $imageRecords = getImagesFromDatabase();
-    $id = $_SESSION['session_id'];
+    $imageRecords = [];
+    $statement = $connection->query('SELECT id FROM accounts');
+    if ($statement->num_rows > 0) {
+        while ($row = $statement->fetch_assoc()) {
+            $imageRecords = array_merge($imageRecords,  getImagesFromDatabase($row['id'], $connection));
+        }
+    }   
+
     if (!empty($imageRecords)) {
         echo "<div class='gallery'>";
         foreach ($imageRecords as $image) {
             echo "<div class='image-card'>";
             $imagePath = $image['file_name'];
             $comment = $image['comment'];
-    
+            $contact = $image['contact'];
             ?>
             <div class='gallery-item'>
-                <img src='<?php echo "photos/".$id."/".$imagePath; ?>'>
+                <img src='<?php echo "photos/".$image['id']."/".$imagePath; ?>'>
                 <div class="comment"><?php echo $comment; ?></div>
+                <div class="comment">Contact: <?php echo $contact; ?></div>
             </div>
             <?php
         }
         echo "</div>";
     } else {
-        echo "No images found in the database.";
+        echo "No request evaluations found in the database.";
     }
 
-    // Close the database connection
-
+    $connection->close();
     ?>
 </div>
 </body>

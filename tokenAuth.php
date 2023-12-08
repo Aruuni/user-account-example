@@ -29,7 +29,7 @@ function send_login_code(string $email, $connection): void
     $mail->setFrom('mm2350@gmail.com', 'Your Name'); // Change this to your email and name
     $mail->addAddress($email);
     $mail->Subject = 'Login Confirmation code';
-    $mail->Body    = "Hi,\n Here is your login code:\n$verification_code";
+    $mail->Body    = "Hi,\nHere is your login code:\n$verification_code";
 
     // Send the email
     if (!$mail->send()) {
@@ -42,8 +42,8 @@ function send_account_confirmation(string $email, $connection): void
 {
     $activation_code = generate_activation_code();
     // create the activation link
-    $activation_link = "https://mm2350sub.000webhostapp.com/confirmation/activateAccount.php?email=$email&activation_code=$activation_code";
-    $activation_link = "http://localhost/IntroToCompSec/confirmation/activateAccount.php?email=$email&activation_code=$activation_code";
+    $activation_link = "https://mm2350sub.000webhostapp.com/activateAccount.php?email=$email&activation_code=$activation_code";
+    $activation_link = "http://localhost/IntroToCompSec/activateAccount.php?email=$email&activation_code=$activation_code";
     
     insertAuthToken($email, $activation_code, $connection);
     // Initialize PHPMailer
@@ -88,7 +88,7 @@ function confirmAuthToken(string $email, string $token, $connection): bool
         $statement->store_result();
         if ($statement->num_rows > 0) {
             $statement->close();
-            if ($close_token = $connection->prepare('UPDATE accounts SET activation_token = NULL AND activation_token_timestamp = NULL AND password_reset_request = 0 AND password_request_timestamp = NULL WHERE email = ?')) {
+            if ($close_token = $connection->prepare('UPDATE accounts SET activation_token = NULL AND activation_token_timestamp = NULL AND password_request_timestamp = NULL WHERE email = ?')) {
                 $close_token->bind_param('s', $email);
                 $close_token->execute();           
             }

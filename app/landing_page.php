@@ -8,16 +8,10 @@
 </head>
 <body>
     <div class="commonBox">
-        <h1>Landing page</h1>
-        <form action="index.php">
-            <input type="submit"  value="See your evaluation list">
-        </form>
-        <form action="file_upload_form.html">
+        <h1>Request evaluation</h1>
+        <form action="file_upload_form.php">
             <input type="submit"  value="Submit evaluation">
         </form>
-    </div>
-    <div>
-        
     </div>
 </body>
 </html>
