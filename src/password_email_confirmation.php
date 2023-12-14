@@ -59,6 +59,10 @@ function confirmPassReset(string $email, string $token, $connection): bool
         $statement->store_result();
         if ($statement->num_rows > 0) {
             $statement->close();
+            if ($close_token = $connection->prepare('UPDATE accounts SET activation_token = NULL AND activation_token_timestamp = NULL AND password_reset_request = 0 AND password_request_timestamp = NULL WHERE email = ?')) {
+                $close_token->bind_param('s', $email);
+                $close_token->execute();           
+            }
             return true;
         }
     }

@@ -8,6 +8,8 @@ CREATE TABLE IF NOT EXISTS `accounts` (
 	`activation_token_timestamp` datetime NULL,
 	`password_reset_request` tinyint(1) NOT NULL DEFAULT '0',
 	`password_request_timestamp` datetime NULL,
+	`fast_fails` int(11) NOT NULL DEFAULT '0',
+	`locked_until` datetime NULL,
 	`confirmed` tinyint(1) NOT NULL DEFAULT '0',
     PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;        <input type="submit" value="Reset Password" class="g-recaptcha" data-sitekey="6LeeNCEpAAAAACjAcEUxAEKzRPGkN4Odwveq8Fh_"  onclick="redirectToAnotherPage()" data-callback='onSubmit' data-action='submit'>
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;   
