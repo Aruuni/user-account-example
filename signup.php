@@ -4,18 +4,18 @@ include_once 'src/connection.php';
 include_once 'tokenAuth.php';
 include_once 'src/captcha.php';
 
+if ($_POST['token'] != $_SESSION['token']) {
+    session_destroy();
+    header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');    
+    die("Error: Tokens do not match.");
+} 
 check_captcha();
 
-// Retrieve form data
-$username           = $_POST['username'];
-$email              = $_POST['email'];
-$password           = $_POST['password'];
-$confirmPassword    = $_POST['confirm_password'];
-$phonenumber        = $_POST['phone'];
-
-$username       = mysqli_real_escape_string($connection, $username);
-$email          = mysqli_real_escape_string($connection, $email);
-$phonenumber    = mysqli_real_escape_string($connection, $phonenumber);
+$username           = mysqli_real_escape_string($connection, $_POST['username']);
+$email              = mysqli_real_escape_string($connection, $_POST['email']);
+$phonenumber        = mysqli_real_escape_string($connection, $_POST['phone']);
+$password           = mysqli_real_escape_string($connection, $_POST['password']);
+$confirmPassword    = mysqli_real_escape_string($connection, $_POST['confirm_password']);
 
 //password match 
 if ($password !== $confirmPassword) {
@@ -23,12 +23,7 @@ if ($password !== $confirmPassword) {
 }
 
 // Validate password strength
-$uppercase      = preg_match('@[A-Z]@', $password);
-$lowercase      = preg_match('@[a-z]@', $password);
-$number         = preg_match('@[0-9]@', $password);
-$specialChars   = preg_match('@[^\w]@', $password);
-
-if(!$uppercase || !$lowercase || !$number || !$specialChars || strlen($password) < 8) {
+if (!preg_match('/^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[^\w]).{8,}$/', $password)) {
     die('Password should be at least 8 characters in length and should include at least one upper case letter, one number, and one special character.');
 }
 

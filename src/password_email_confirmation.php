@@ -44,7 +44,7 @@ function send_password_reset(string $email, $connection): void
 
 function insertResetToken(string $email, string $token, $connection): void
 {
-    if ($statement = $connection->prepare('UPDATE accounts SET password_reset_request = 1, activation_token = ?, activation_token_timestamp = DATE_ADD(NOW(), INTERVAL 10 MINUTE) , password_request_timestamp = DATE_ADD(NOW(), INTERVAL 10 MINUTE) WHERE email = ?')) {
+    if ($statement = $connection->prepare('UPDATE accounts SET activation_token = ?, activation_token_timestamp = DATE_ADD(NOW(), INTERVAL 10 MINUTE) , password_request_timestamp = DATE_ADD(NOW(), INTERVAL 10 MINUTE) WHERE email = ?')) {
         $statement->bind_param('ss', $token, $email);
         $statement->execute();
         $statement->close();
@@ -53,13 +53,17 @@ function insertResetToken(string $email, string $token, $connection): void
 
 function confirmPassReset(string $email, string $token, $connection): bool
 {
-    if ($statement = $connection->prepare('SELECT * FROM accounts WHERE email = ? AND activation_token = ? AND activation_token_timestamp > NOW() AND password_reset_request = 1 AND password_request_timestamp > NOW()')) {
+    if ($statement = $connection->prepare('SELECT * FROM accounts WHERE email = ? AND activation_token = ? AND activation_token_timestamp > NOW() AND password_request_timestamp > NOW()')) {
         $statement->bind_param('ss', $email, $token);
         $statement->execute();
         $statement->store_result();
         if ($statement->num_rows > 0) {
             $statement->close();
+<<<<<<< HEAD
             if ($close_token = $connection->prepare('UPDATE accounts SET activation_token = NULL AND activation_token_timestamp = NULL AND password_reset_request = 0 AND password_request_timestamp = NULL WHERE email = ?')) {
+=======
+            if ($close_token = $connection->prepare('UPDATE accounts SET activation_token = NULL AND activation_token_timestamp = NULL AND password_request_timestamp = NULL WHERE email = ?')) {
+>>>>>>> 036e34286d71425867018f1f999a10dd661ae328
                 $close_token->bind_param('s', $email);
                 $close_token->execute();           
             }

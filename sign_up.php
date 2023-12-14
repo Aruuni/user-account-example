@@ -1,3 +1,8 @@
+
+<?php
+session_start();
+$_SESSION['token'] = md5(uniqid(mt_rand(), true));
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -41,13 +46,14 @@
                 <i class="fas fa-lock"></i>
             </label>
             <input type="password" name="confirm_password" placeholder="Confirm Password" id="confirm_password" oninput="checkConfirmPasswordStrength()" required>
-
-            <div id="warning-message" class="warning" value=""></div>
             
+            <input type="hidden" name="token" value="<?php echo $_SESSION['token']; ?>">
+            
+            <div id="warning-message" class="warning" value=""></div>
             <input type="submit" value="Create Account" class="g-recaptcha" data-sitekey="6LeeNCEpAAAAACjAcEUxAEKzRPGkN4Odwveq8Fh_" data-callback='onSubmit' data-action='submit'>
 
         </form>
-        <form action="index.html">
+        <form action="log_in.php">
             <input type="submit"  value="Log in">
         </form>
     </div>

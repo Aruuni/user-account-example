@@ -1,6 +1,5 @@
 <?php
-
-include_once '../src/connection.php';  
+include_once 'src/connection.php';  
 
 $email = $_GET['email'];
 $activation_code = $_GET['activation_code'];
@@ -15,14 +14,13 @@ if ($statement = $connection->prepare('SELECT id FROM accounts WHERE email = ? A
             $statement->bind_param('s', $email);
             $statement->execute();
             $statement->close();
-            header("Location: account_verified.html");
+            header("Location: confirmation/account_verified.html");
             exit();
         }
     } else {
         $statement->close();
-        header("Location: account_verification_failed.html");
+        header("Location: confirmation/account_verification_failed.html");
         exit();
     }
 }
-
 ?>
